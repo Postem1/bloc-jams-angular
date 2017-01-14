@@ -3,7 +3,7 @@
         var SongPlayer = {};
 
         /**
-        * @desc returns an album from Fixtures.js
+        * @desc returns an album from Fixtures.js, will use for next and previous buttons
         * @type {Object}
         */
         var currentAlbum = Fixtures.getAlbum();
@@ -21,8 +21,7 @@
         */
         var setSong = function(song) {
             if (currentBuzzObject) {
-                currentBuzzObject.stop();
-                SongPlayer.currentSong.playing = null;
+                stopSong();
             }
 
             currentBuzzObject = new buzz.sound(song.audioUrl, {
@@ -58,6 +57,16 @@
             song.playing = true;
         }
 
+        /**
+        @function stopSong
+        @desc stops song and sets song.playing to false.
+        @param {Object} song
+        */
+        var stopSong = function(song){
+            currentBuzzObject.stop();
+            SongPlayer.currentSong.playing = null;
+        }
+
         SongPlayer.play = function(song) {
             song = song || SongPlayer.currentSong;
             if (SongPlayer.currentSong !== song) {
@@ -76,10 +85,30 @@
             song.playing = false;
         };
 
+        /**
+        @function previous
+        @desc skips back to previous song in array.  Stops playing music at first song
+        */
         SongPlayer.previous = function() {
             var currentSongIndex = getSongIndex(SongPlayer.currentSong);
             currentSongIndex--;
             if (currentSongIndex < 0) {
+                stopSong(song);
+            } else {
+                var song = currentAlbum.songs[currentSongIndex];
+                setSong(song)
+                playsong(song)
+            }
+        };
+
+        /**
+        @function next
+        @desc skips to next song in array.  Stops playing music if last song
+        */
+        SongPlayer.next = function(){
+            var currentSongIndex = getSongIndex(SongPlayer.currentSong);
+            currentSongIndex++;
+            if (currentSongIndex >= currentAlbum.songs.length) {
                 currentBuzzObject.stop();
                 SongPlayer.currentSong.playing = null;
             } else {
