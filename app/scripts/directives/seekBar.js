@@ -1,5 +1,6 @@
 (function() {
     function seekBar($document) {
+
         //Calculates the horizontal percent along the seek bar where the
         //event (passed in from the view as  $event) occurred.
         var calculatePercent = function(seekBar, event) {
@@ -31,6 +32,10 @@
 
                 scope.fillStyle = function() {
                     return {width: percentString()};
+                }
+
+                scope.thumbStyle = function(){
+                    return {left: percentString()};
                 };
 
                 //Updates the seek bar value based on the seek bar's width and the location of the user's click on the seek bar.
