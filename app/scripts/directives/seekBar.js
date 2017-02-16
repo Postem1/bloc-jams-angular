@@ -16,13 +16,23 @@
             templateUrl: '/templates/directives/seek_bar.html',
             replace:    true,
             restrict:   'E',
-            scope:  {},
-            link:   function(scope, element, attributes){
+            scope:  {
+                onChange: '&'
+            },
+            link:   function(scope, element, attributes){ // element is the DOM element in HTML the directive is applied on.
                 scope.value = 0;
                 scope.max = 100;
 
                 //Holds the element that matches the directive (<seek-bar>) as a jQuery object so we can call jQuery methods on it.
                 var $seekBar = $(element);
+
+                attributes.$observe('value', function(newValue) {
+                    scope.value = newValue;
+                });
+
+                attributes.$observe('max', function(newValue) {
+                    scope.max = newValue;
+                });
 
                 var percentString = function () {
                     var value = scope.value;
@@ -43,18 +53,16 @@
                 scope.onClickSeekBar = function(event) {
                     var percent = calculatePercent($seekBar, event);
                     scope.value = percent * scope.max;
+                    notifyOnChange(scope.value);
                 };
-
-                scope.$watch('value', function(newVal, oldVal){
-                    console.log("scope.value was " + oldVal + " and is now " + newVal);
-                });
 
                 //uses $apply to constantly apply the change in value of  scope.value as the user drags the seek bar thumb.
                 scope.trackThumb = function() {
                     $document.bind('mousemove.thumb', function(event) {
                         var percent = calculatePercent($seekBar, event);
                         scope.$apply(function() {
-                                scope.value = percent * scope.max;
+                            scope.value = percent * scope.max;
+                            notifyOnChange(scope.value);
                         });
                     });
 
@@ -62,6 +70,12 @@
                         $document.unbind('mousemove.thumb');
                         $document.unbind('mouseup.thumb');
                     });
+                };
+                
+                var notifyOnChange = function(newValue) {
+                    if (typeof scope.onChange === 'function') {
+                        scope.onChange({value: newValue});
+                    }
                 };
             }
         };
