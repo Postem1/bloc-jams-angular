@@ -81,6 +81,13 @@
                 currentBuzzObject.setTime(time);
             }
         };
+        
+        SongPlayer.timer =function(){
+            if(currentBuzzObject){
+            var fix = buzz.toTimer(currentBuzzObject.getTime())
+                return fix;
+            }
+        } 
 
         /**
         @function playSong
