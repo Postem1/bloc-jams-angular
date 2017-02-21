@@ -19,7 +19,8 @@
             scope:  {
                 onChange: '&'
             },
-            link:   function(scope, element, attributes){ // element is the DOM element in HTML the directive is applied on.
+            // element is the DOM element in HTML the directive is applied on.  attributes are the attributes on the directive
+            link:   function(scope, element, attributes){ 
                 scope.value = 0;
                 scope.max = 100;
 
@@ -41,22 +42,22 @@
                         return percent + "%";
                 };
 
-                scope.fillStyle = function() {
+                scope.fillStyle = function() { // fills the width of the seek bar based on scope.value and scope.max
                     return {width: percentString()};
                 }
 
-                scope.thumbStyle = function(){
+                scope.thumbStyle = function(){ // gives the thumb-dot a new position based on scope.value and scope.max
                     return {left: percentString()};
                 };
 
-                //Updates the seek bar value based on the seek bar's width and the location of the user's click on the seek bar.
+                //Updates the scope.value based on the seek bar's width and the location of the user's click on the seek bar.
                 scope.onClickSeekBar = function(event) {
                     var percent = calculatePercent($seekBar, event);
-                    scope.value = percent * scope.max;
+                    scope.value = percent * scope.max; //sets scope.value porportionate to the max
                     notifyOnChange(scope.value);
                 };
 
-                //uses $apply to constantly apply the change in value of  scope.value as the user drags the seek bar thumb.
+                //uses $apply to constantly apply the change in value of scope.value as the user drags the seek bar thumb.
                 scope.trackThumb = function() {
                     $document.bind('mousemove.thumb', function(event) {
                         var percent = calculatePercent($seekBar, event);
